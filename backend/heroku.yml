@@ -1,0 +1,11 @@
+build:
+  languages:
+    - nodejs
+  packages:
+    - libsm6
+    - libxext6
+    - libxrender-dev
+  buildpacks:
+    - heroku/nodejs
+run:
+  web: node server.js
