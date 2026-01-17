@@ -1,0 +1,99 @@
+# Ignore Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Ignore Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Build outputs
+build/
+dist/
+frontend/build/
+frontend/.react/
+
+# Logs
+logs/
+*.log
+lerna-debug.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Videos and large files
+recorded_videos/
+uploads/
+*.mp4
+*.mov
+*.avi
+
+# Temporary files
+*.tmp
+*.bak
+.temp/
+temp/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Dependencies for specific environments
+ai-service/env/
+ai-service/.venv/
+
+# Database
+*.db
+*.sqlite
+mongodb_data/
+
+# Cache
+.cache/
+.eslintcache
+
+# Local history
+.history/
+.ionide/
