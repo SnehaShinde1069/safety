@@ -1,49 +1,21 @@
 services:
   - type: web
-    name: girl-safety-backend
+    name: girl-safety-system
     env: docker
     dockerfilePath: ./backend/Dockerfile
     port: 5000
     plan: free
-    healthCheckPath: /api/health
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 5000
-      - key: FRONTEND_URL
-        sync: false
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
         sync: false
-      - key: FLASK_API_URL
+      - key: FRONTEND_URL
         sync: false
-
-  - type: web
-    name: girl-safety-frontend
-    env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    port: 3000
-    plan: free
-    healthCheckPath: /
-    envVars:
-      - key: REACT_APP_API_URL
-        sync: false
-      - key: REACT_APP_AI_URL
-        sync: false
-
-  - type: web
-    name: girl-safety-ai
-    env: docker
-    dockerfilePath: ./ai-service/Dockerfile
-    port: 5001
-    plan: free
-    healthCheckPath: /health
-    envVars:
-      - key: FLASK_ENV
-        value: production
-      - key: BACKEND_URL
-        sync: false
-      - key: AI_SERVICE_PORT
-        value: 5001
+      - key: AI_SERVICE_URL
+        value: "http://localhost:5001"

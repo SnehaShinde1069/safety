@@ -4,6 +4,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
+const axios = require('axios');
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +24,7 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Store io instance for use in routes
 app.io = io;
@@ -55,14 +58,51 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/alerts', require('./routes/alertRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
+// AI Service Proxy
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:5001';
+
+app.use('/ai', async (req, res) => {
+  try {
+    const url = `${AI_SERVICE_URL}${req.url}`;
+    const response = await axios({
+      method: req.method,
+      url: url,
+      data: req.body,
+      headers: {
+        ...req.headers,
+        'Content-Type': 'application/json'
+      }
+    });
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error('AI Service proxy error:', error.message);
+    res.status(error.response?.status || 500).json({
+      error: 'AI Service temporarily unavailable'
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Girl Safety System Backend is running' });
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK' });
+});
+
+// Serve frontend for all other routes (React Router)
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  }
+});
+
 // 404 Handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({ error: 'Route not found' });
+  }
 });
 
 // Error handling middleware
