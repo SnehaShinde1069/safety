@@ -59,24 +59,27 @@ app.use('/api/alerts', require('./routes/alertRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // AI Service Proxy
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:5001';
+// If AI_SERVICE_URL is not set, return 503 so requests fail gracefully instead of
+// attempting to connect to localhost:5001 inside the container.
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || '';
 
 app.use('/ai', async (req, res) => {
+  if (!AI_SERVICE_URL) {
+    return res.status(503).json({ error: 'AI service not configured' });
+  }
+
   try {
     const url = `${AI_SERVICE_URL}${req.url}`;
     const response = await axios({
       method: req.method,
       url: url,
       data: req.body,
-      headers: {
-        ...req.headers,
-        'Content-Type': 'application/json'
-      }
+      headers: Object.assign({}, req.headers, { 'host': new URL(AI_SERVICE_URL).host })
     });
     res.status(response.status).json(response.data);
   } catch (error) {
     console.error('AI Service proxy error:', error.message);
-    res.status(error.response?.status || 500).json({
+    res.status(error.response?.status || 502).json({
       error: 'AI Service temporarily unavailable'
     });
   }
