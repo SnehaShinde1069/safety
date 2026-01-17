@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: girl-safety-system
+    name: girl-safety-backend
     env: docker
     dockerfilePath: ./backend/Dockerfile
     port: 5000
@@ -18,4 +18,19 @@ services:
       - key: FRONTEND_URL
         sync: false
       - key: AI_SERVICE_URL
-        value: "http://localhost:5001"
+        sync: false
+
+  - type: web
+    name: girl-safety-ai
+    env: docker
+    dockerfilePath: ./ai-service/Dockerfile
+    port: 5001
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: BACKEND_URL
+        sync: false
+      - key: AI_SERVICE_PORT
+        value: 5001
